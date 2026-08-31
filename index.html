@@ -1,0 +1,525 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>NowBlangis</title>
+  <meta name="description" content="NowBlangis - código, segurança, projeto estranho e internet." />
+  <style>
+    :root{
+      --bg:#030403;
+      --panel:#070a08;
+      --green:#39ff67;
+      --green2:#0dac35;
+      --text:#d9ffe1;
+      --muted:#6e8a74;
+      --line:#132719;
+      --red:#ff334f;
+    }
+
+    *{box-sizing:border-box}
+    html{scroll-behavior:smooth}
+    body{
+      margin:0;
+      background:#030403;
+      color:var(--text);
+      font-family:"Courier New", monospace;
+      cursor:crosshair;
+      overflow-x:hidden;
+    }
+
+    body::before{
+      content:"";
+      position:fixed;
+      inset:0;
+      pointer-events:none;
+      z-index:99;
+      background:
+        repeating-linear-gradient(
+          to bottom,
+          rgba(255,255,255,.015) 0,
+          rgba(255,255,255,.015) 1px,
+          transparent 1px,
+          transparent 3px
+        );
+    }
+
+    .noise{
+      position:fixed;
+      inset:0;
+      pointer-events:none;
+      opacity:.04;
+      z-index:98;
+      background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 180 180' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='.7'/%3E%3C/svg%3E");
+    }
+
+    a{color:inherit;text-decoration:none}
+    .wrap{width:min(1050px,92%);margin:auto}
+
+    nav{
+      position:sticky;
+      top:0;
+      z-index:20;
+      background:rgba(3,4,3,.92);
+      border-bottom:1px solid #102015;
+    }
+
+    .nav{
+      min-height:58px;
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+      gap:20px;
+    }
+
+    .logo{
+      color:var(--green);
+      font-weight:900;
+      font-size:1rem;
+      letter-spacing:2px;
+    }
+
+    .navlinks{
+      display:flex;
+      gap:18px;
+      color:#5f7765;
+      font-size:.78rem;
+    }
+
+    .navlinks a:hover{color:var(--green)}
+
+    header{
+      min-height:92vh;
+      display:flex;
+      align-items:center;
+      position:relative;
+    }
+
+    .hero{
+      display:grid;
+      grid-template-columns:1.15fr .85fr;
+      gap:40px;
+      align-items:center;
+      padding:70px 0;
+    }
+
+    .tiny{
+      color:#4f6f56;
+      font-size:.78rem;
+      margin-bottom:15px;
+    }
+
+    h1{
+      margin:0;
+      font-size:clamp(4rem,10vw,8rem);
+      line-height:.78;
+      letter-spacing:-7px;
+      text-transform:uppercase;
+      color:#ecfff0;
+    }
+
+    h1 span{
+      color:transparent;
+      -webkit-text-stroke:1px #2d6b3b;
+      text-shadow:0 0 18px rgba(57,255,103,.08);
+    }
+
+    .bio{
+      max-width:620px;
+      color:#7f9685;
+      line-height:1.75;
+      margin:30px 0;
+      font-size:1rem;
+    }
+
+    .bio b{
+      color:#c6ffd2;
+      font-weight:normal;
+    }
+
+    .buttons{
+      display:flex;
+      flex-wrap:wrap;
+      gap:10px;
+    }
+
+    .btn{
+      border:1px solid #23512f;
+      background:#071009;
+      color:var(--green);
+      padding:12px 15px;
+      font-weight:bold;
+      font-size:.8rem;
+      transition:.15s;
+    }
+
+    .btn:hover{
+      background:var(--green);
+      color:#020402;
+      transform:translate(-2px,-2px);
+      box-shadow:4px 4px 0 #0d3217;
+    }
+
+    .terminal{
+      border:1px solid #18361f;
+      background:#050805;
+      min-height:330px;
+      box-shadow:10px 10px 0 #020302;
+      transform:rotate(-1deg);
+    }
+
+    .term-top{
+      padding:10px 12px;
+      border-bottom:1px solid #132719;
+      color:#3d6245;
+      font-size:.72rem;
+      display:flex;
+      justify-content:space-between;
+    }
+
+    .term{
+      padding:20px;
+      color:#78957f;
+      font-size:.88rem;
+      line-height:1.9;
+    }
+
+    .g{color:var(--green)}
+    .w{color:#dfffe5}
+    .r{color:var(--red)}
+
+    .cursor{
+      display:inline-block;
+      width:8px;
+      height:14px;
+      background:var(--green);
+      animation:blink .8s steps(1) infinite;
+      vertical-align:middle;
+    }
+
+    @keyframes blink{50%{opacity:0}}
+
+    section{
+      padding:85px 0;
+      border-top:1px solid #0c1a10;
+    }
+
+    .label{
+      color:#315b3a;
+      font-size:.75rem;
+      margin-bottom:10px;
+    }
+
+    h2{
+      margin:0 0 18px;
+      font-size:clamp(2rem,4vw,3.2rem);
+      color:#e4ffe9;
+      letter-spacing:-2px;
+    }
+
+    .lead{
+      max-width:700px;
+      color:#718078;
+      line-height:1.75;
+    }
+
+    .project-grid{
+      display:grid;
+      grid-template-columns:repeat(3,1fr);
+      gap:14px;
+      margin-top:35px;
+    }
+
+    .card{
+      border:1px solid #132719;
+      background:#050805;
+      padding:20px;
+      min-height:230px;
+      position:relative;
+      transition:.15s;
+    }
+
+    .card:hover{
+      border-color:#2f7440;
+      transform:translateY(-3px);
+    }
+
+    .card .id{
+      color:#284e31;
+      font-size:.7rem;
+    }
+
+    .card h3{
+      margin:24px 0 10px;
+      color:#cfffda;
+      font-size:1.15rem;
+    }
+
+    .card p{
+      color:#68786c;
+      font-size:.86rem;
+      line-height:1.6;
+    }
+
+    .tag{
+      display:inline-block;
+      font-size:.68rem;
+      padding:4px 7px;
+      margin:4px 4px 0 0;
+      border:1px solid #173822;
+      color:#61a870;
+    }
+
+    .manifesto{
+      margin-top:30px;
+      border-left:2px solid var(--green);
+      padding:18px 20px;
+      background:#050805;
+      color:#7d9483;
+      line-height:1.8;
+    }
+
+    .skills{
+      margin-top:30px;
+      display:flex;
+      flex-wrap:wrap;
+      gap:10px;
+    }
+
+    .skill{
+      border:1px solid #193523;
+      color:#75a67f;
+      padding:10px 12px;
+      background:#050805;
+      font-size:.8rem;
+    }
+
+    .contactbox{
+      border:1px dashed #1b4a29;
+      background:#040704;
+      padding:28px;
+      margin-top:28px;
+    }
+
+    footer{
+      border-top:1px solid #0c1a10;
+      padding:35px 0 55px;
+      color:#425248;
+      font-size:.76rem;
+    }
+
+    .glitch:hover{
+      animation:glitch .12s linear 4;
+    }
+
+    @keyframes glitch{
+      0%{transform:translate(0)}
+      25%{transform:translate(3px,-1px)}
+      50%{transform:translate(-3px,1px)}
+      75%{transform:translate(1px,2px)}
+      100%{transform:translate(0)}
+    }
+
+    @media(max-width:840px){
+      .hero{grid-template-columns:1fr}
+      .project-grid{grid-template-columns:1fr}
+      .navlinks{display:none}
+      h1{letter-spacing:-4px}
+      .terminal{transform:none}
+    }
+  </style>
+</head>
+<body>
+  <div class="noise"></div>
+
+  <nav>
+    <div class="wrap nav">
+      <div class="logo">NOWBLANGIS.exe</div>
+      <div class="navlinks">
+        <a href="#sobre">sobre</a>
+        <a href="#projetos">projetos</a>
+        <a href="#skills">skills</a>
+        <a href="#contato">contato</a>
+      </div>
+    </div>
+  </nav>
+
+  <header>
+    <div class="wrap hero">
+      <div>
+        <div class="tiny">[ conexão estabelecida ]</div>
+        <h1 class="glitch">NOW<br><span>BLANGIS</span></h1>
+
+        <p class="bio">
+          Eu mexo com <b>código</b>, web, segurança, automação e umas ideia meio torta.
+          Não sou muito da vibe de ficar falando bonito pra parecer profissional.
+          Eu curto mais <b>abrir, entender, testar, quebrar problema e fazer funcionar</b>.
+        </p>
+
+        <div class="buttons">
+          <a class="btn" href="#projetos">ver minhas parada</a>
+          <a class="btn" href="#contato">me achar por aí</a>
+        </div>
+      </div>
+
+      <div class="terminal">
+        <div class="term-top">
+          <span>nowblangis@unknown</span>
+          <span>tty01</span>
+        </div>
+        <div class="term">
+          <div><span class="g">$</span> whoami</div>
+          <div class="w">NowBlangis</div>
+          <br>
+          <div><span class="g">$</span> cat interesses.txt</div>
+          <div>web</div>
+          <div>segurança</div>
+          <div>automação</div>
+          <div>jogo estranho</div>
+          <div>internet obscura</div>
+          <div>ideia aleatória que vira projeto</div>
+          <br>
+          <div><span class="g">$</span> status</div>
+          <div><span class="g">ONLINE</span> // mexendo em alguma coisa</div>
+          <br>
+          <div><span class="g">$</span> _ <span class="cursor"></span></div>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    <section id="sobre">
+      <div class="wrap">
+        <div class="label">01.sobre_mim</div>
+        <h2>não tenho muito discurso não</h2>
+        <p class="lead">
+          Sou o NowBlangis. Gosto de aprender fazendo, fuçando e vendo como as coisas funcionam por dentro.
+          Às vezes sai site, às vezes sai script, às vezes sai uma parada completamente aleatória.
+          O importante é não ficar só olhando tutorial igual NPC.
+        </p>
+
+        <div class="manifesto">
+          > abrir.<br>
+          > fuçar.<br>
+          > entender.<br>
+          > fazer funcionar.<br>
+          > repetir até ficar bom.
+        </div>
+      </div>
+    </section>
+
+    <section id="projetos">
+      <div class="wrap">
+        <div class="label">02.coisas_que_eu_fiz</div>
+        <h2>umas parada minha</h2>
+        <p class="lead">
+          Aqui entra os projetos de verdade conforme eu for terminando. Nada de encher linguiça só pra parecer que tem 40 anos de experiência.
+        </p>
+
+        <div class="project-grid">
+          <article class="card">
+            <div class="id">arquivo_01</div>
+            <h3>site que não parece site de empresa</h3>
+            <p>
+              Interface dark, terminal, ruído, animação e umas escolhas visuais que provavelmente fariam um designer corporativo ter um AVC.
+            </p>
+            <span class="tag">HTML</span>
+            <span class="tag">CSS</span>
+            <span class="tag">JS</span>
+          </article>
+
+          <article class="card">
+            <div class="id">arquivo_02</div>
+            <h3>painel de pesquisa</h3>
+            <p>
+              Uma ideia pra organizar pesquisa, ativos, notas e testes autorizados sem virar aquela pasta Downloads com 900 arquivos.
+            </p>
+            <span class="tag">SECURITY</span>
+            <span class="tag">OSINT</span>
+            <span class="tag">WEB</span>
+          </article>
+
+          <article class="card">
+            <div class="id">arquivo_03</div>
+            <h3>projeto estranho da madrugada</h3>
+            <p>
+              Aquela categoria de projeto que começa com “será que dá?” e termina três horas depois com um negócio funcionando.
+            </p>
+            <span class="tag">PYTHON</span>
+            <span class="tag">AUTOMAÇÃO</span>
+            <span class="tag">CAOS</span>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section id="skills">
+      <div class="wrap">
+        <div class="label">03.o_que_eu_mexo</div>
+        <h2>skill sem barrinha fake de 97%</h2>
+        <p class="lead">
+          Odeio aquelas barrinha “JavaScript 93%” KKKK. Então fica só o que eu realmente curto mexer.
+        </p>
+
+        <div class="skills">
+          <div class="skill">JavaScript</div>
+          <div class="skill">React</div>
+          <div class="skill">Node</div>
+          <div class="skill">Python</div>
+          <div class="skill">HTML / CSS</div>
+          <div class="skill">APIs</div>
+          <div class="skill">Linux</div>
+          <div class="skill">automação</div>
+          <div class="skill">segurança web</div>
+          <div class="skill">OSINT</div>
+          <div class="skill">Three.js</div>
+          <div class="skill">mexer até funcionar</div>
+        </div>
+      </div>
+    </section>
+
+    <section id="contato">
+      <div class="wrap">
+        <div class="label">04.me_acha</div>
+        <h2>quer trocar ideia?</h2>
+
+        <div class="contactbox">
+          <div><span class="g">$</span> contact --nowblangis</div>
+          <br>
+          <div>email: <a class="w" href="mailto:joaodias9e3@gmail.com">joaodias9e3@gmail.com</a></div>
+          <div>instagram: <a class="w" href="https://www.instagram.com/nowblangis.kali/" target="_blank" rel="noopener noreferrer">@nowblangis.kali</a></div>
+          
+          <br>
+          <div class="g">[ conexão aberta ]</div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <div class="wrap">
+      NowBlangis // feito na base do código, café e ideia aleatória.
+    </div>
+  </footer>
+
+  <script>
+    const title = document.querySelector('h1');
+
+    setInterval(() => {
+      if(Math.random() > .84){
+        title.style.textShadow =
+          `${Math.random()*5-2}px 0 #39ff67, ${Math.random()*-5}px 0 #ff334f`;
+        setTimeout(() => title.style.textShadow = 'none', 80);
+      }
+    }, 600);
+
+    document.addEventListener('keydown', (e) => {
+      if(e.key.toLowerCase() === 'h'){
+        document.body.style.filter =
+          document.body.style.filter ? '' : 'contrast(1.2) saturate(1.25)';
+      }
+    });
+  </script>
+</body>
+</html>
