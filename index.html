@@ -1,525 +1,246 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="pt-BR">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>NowBlangis</title>
-  <meta name="description" content="NowBlangis - código, segurança, projeto estranho e internet." />
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#080d0b">
+  <meta name="description" content="NowBlangis — estudante de Engenharia de Software. Projetos em Java, React, Three.js e desenvolvimento experimental de mods para Minecraft.">
+  <title>NowBlangis — Software & Experimentos</title>
   <style>
-    :root{
-      --bg:#030403;
-      --panel:#070a08;
-      --green:#39ff67;
-      --green2:#0dac35;
-      --text:#d9ffe1;
-      --muted:#6e8a74;
-      --line:#132719;
-      --red:#ff334f;
+    :root {
+      color-scheme: dark;
+      --bg: #080d0b;
+      --bg-soft: #0c1410;
+      --surface: #101b15;
+      --surface-alt: #0d1712;
+      --line: #244032;
+      --line-soft: #1c3126;
+      --accent: #91f6a9;
+      --accent-strong: #b8ffca;
+      --text: #edf7ef;
+      --muted: #a2b9a9;
+      --subtle: #779083;
+      --mono: ui-monospace, SFMono-Regular, Consolas, 'Liberation Mono', monospace;
+      --sans: Inter, ui-sans-serif, system-ui, -apple-system, 'Segoe UI', sans-serif;
+      --max: 1120px;
     }
-
-    *{box-sizing:border-box}
-    html{scroll-behavior:smooth}
-    body{
-      margin:0;
-      background:#030403;
-      color:var(--text);
-      font-family:"Courier New", monospace;
-      cursor:crosshair;
-      overflow-x:hidden;
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body { margin: 0; background: var(--bg); color: var(--text); font-family: var(--sans); line-height: 1.65; }
+    body::before { content: ''; position: fixed; inset: 0; z-index: -1; pointer-events: none; background: radial-gradient(ellipse 55% 36% at 75% 4%, rgba(50, 135, 77, .17), transparent 80%), linear-gradient(90deg, rgba(150, 255, 178, .016) 1px, transparent 1px), linear-gradient(rgba(150, 255, 178, .016) 1px, transparent 1px); background-size: auto, 58px 58px, 58px 58px; }
+    ::selection { background: #2d7e48; color: white; }
+    a { color: inherit; text-decoration: none; }
+    a:focus-visible, button:focus-visible { outline: 2px solid var(--accent); outline-offset: 5px; }
+    .container { width: min(calc(100% - 42px), var(--max)); margin-inline: auto; }
+    .mono { font-family: var(--mono); }
+    .eyebrow { color: var(--accent); font: 600 .75rem/1.5 var(--mono); letter-spacing: .13em; text-transform: uppercase; }
+    .topbar { position: sticky; top: 0; z-index: 10; border-bottom: 1px solid rgba(145, 246, 169, .13); background: rgba(8, 13, 11, .92); backdrop-filter: blur(16px); }
+    .nav { min-height: 73px; display: flex; align-items: center; justify-content: space-between; gap: 24px; }
+    .brand { display: flex; align-items: center; gap: 10px; color: var(--accent-strong); font: 800 .9rem/1 var(--mono); letter-spacing: .03em; }
+    .brand-mark { width: 30px; height: 30px; display: grid; place-items: center; border: 1px solid #4e9566; background: #142d1c; box-shadow: 0 0 25px rgba(145,246,169,.08); }
+    .nav-links { display: flex; align-items: center; gap: clamp(14px, 2.5vw, 28px); flex-wrap: wrap; }
+    .nav-links a { color: var(--muted); font: 500 .78rem var(--mono); transition: color .2s; }
+    .nav-links a:hover { color: var(--accent); }
+    .nav-cta { border: 1px solid #4d8060; border-radius: 5px; padding: 9px 13px; color: var(--accent-strong) !important; }
+    .hero { display: grid; grid-template-columns: 1.15fr .85fr; gap: clamp(32px, 6vw, 80px); align-items: center; padding-block: clamp(90px, 12vw, 150px) 115px; }
+    .status { display: inline-flex; align-items: center; gap: 9px; padding: 7px 11px; border: 1px solid var(--line); border-radius: 4px; color: var(--muted); font: 500 .72rem var(--mono); background: rgba(16, 27, 21, .75); }
+    .status-dot { display: inline-block; width: 7px; height: 7px; border-radius: 50%; background: var(--accent); box-shadow: 0 0 13px rgba(145, 246, 169, .65); }
+    h1, h2, h3, p { margin-top: 0; }
+    h1 { margin: 27px 0 24px; font-weight: 800; font-size: clamp(3.4rem, 8.5vw, 7.6rem); letter-spacing: -.085em; line-height: .97; }
+    h1 span { display: block; background: linear-gradient(120deg, #9dfab4, #d9ffe3 50%, #60af77); color: transparent; background-clip: text; -webkit-background-clip: text; }
+    .hero-description { max-width: 570px; color: var(--muted); font-size: clamp(.98rem, 1.6vw, 1.1rem); line-height: 1.8; }
+    .hero-description strong { color: #e1ffea; font-weight: 600; }
+    .actions { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 30px; }
+    .button { display: inline-flex; align-items: center; justify-content: center; gap: 10px; padding: 12px 19px; border: 1px solid #407552; border-radius: 5px; font: 700 .81rem var(--mono); transition: transform .2s, background .2s; }
+    .button:hover { transform: translateY(-3px); }
+    .button-primary { background: var(--accent); color: #06140c; border-color: var(--accent); }
+    .button-secondary { color: var(--accent-strong); background: rgba(19,39,25,.65); }
+    .terminal { overflow: hidden; border: 1px solid #376349; border-radius: 9px; background: #07100b; box-shadow: 18px 18px 0 rgba(13, 29, 18, .7), 0 24px 90px rgba(6, 22, 11, .5); transform: rotate(1deg); }
+    .terminal-head { display: flex; justify-content: space-between; align-items: center; gap: 12px; padding: 13px 17px; border-bottom: 1px solid #21402d; background: #102019; color: #95b89d; font: .7rem var(--mono); }
+    .terminal-dots { display: flex; gap: 5px; }
+    .terminal-dots i { display: block; width: 7px; height: 7px; border-radius: 50%; background: #486b53; }
+    .terminal-body { padding: 26px 22px 28px; color: #abc9b3; font: .82rem/2.05 var(--mono); }
+    .terminal-body .prompt { color: var(--accent); }
+    .terminal-body .value { color: #e4f9e8; }
+    .terminal-body .comment { color: #769884; }
+    .terminal-body .space { height: 14px; }
+    .caret { display: inline-block; width: 8px; height: 14px; vertical-align: -.2em; background: var(--accent); animation: blink 1.15s steps(1) infinite; }
+    @keyframes blink { 50% { opacity: 0; } }
+    section { scroll-margin-top: 95px; padding-block: 95px; border-top: 1px solid var(--line-soft); }
+    .section-top { display: flex; justify-content: space-between; gap: 30px; align-items: end; margin-bottom: 31px; }
+    h2 { max-width: 700px; font-size: clamp(2.1rem, 4.6vw, 3.8rem); line-height: 1.13; letter-spacing: -.052em; margin: 13px 0 0; }
+    .section-intro { max-width: 650px; color: var(--muted); margin: 0 0 30px; }
+    .section-aside { color: var(--subtle); font: .71rem var(--mono); white-space: nowrap; padding-bottom: 8px; }
+    .project-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px; }
+    .project-card { display: flex; flex-direction: column; min-height: 345px; padding: 24px; border: 1px solid var(--line); background: linear-gradient(155deg, #13241a, #0b130f 75%); border-radius: 9px; position: relative; transition: transform .2s, border-color .2s, box-shadow .2s; }
+    .project-card:hover { border-color: #47865a; box-shadow: 0 15px 38px rgba(3,13,7,.35); transform: translateY(-4px); }
+    .card-head { display: flex; justify-content: space-between; align-items: center; gap: 12px; font: 600 .68rem var(--mono); letter-spacing: .04em; }
+    .project-index { color: var(--accent); }
+    .project-state { color: #9ab2a1; border: 1px solid #2b4934; border-radius: 100px; padding: 4px 9px; font-weight: 400; }
+    .project-glyph { display: flex; align-items: center; justify-content: center; height: 97px; margin: 20px 0; color: #98eeb0; font: 400 3.2rem var(--mono); text-shadow: 0 0 25px rgba(145, 246, 169, .2); }
+    .project-card h3 { font-size: 1.24rem; letter-spacing: -.02em; margin-bottom: 11px; }
+    .project-card p { color: var(--muted); font-size: .88rem; line-height: 1.75; margin-bottom: 20px; }
+    .tags { display: flex; flex-wrap: wrap; gap: 7px; margin-top: auto; }
+    .tag { border: 1px solid #31503c; border-radius: 4px; color: #b0dfbb; padding: 5px 8px; font: .7rem var(--mono); }
+    .disclaimer { margin-top: 19px; font: .75rem/1.7 var(--mono); color: var(--subtle); }
+    .about-grid { display: grid; grid-template-columns: 1.2fr .8fr; gap: 18px; align-items: stretch; }
+    .panel { border: 1px solid var(--line); border-radius: 9px; background: rgba(12,24,16,.85); padding: 28px; }
+    .panel h3 { font-size: 1.07rem; margin-bottom: 15px; }
+    .panel p { color: var(--muted); max-width: 650px; }
+    .panel p:last-child { margin-bottom: 0; }
+    .detail { display: flex; align-items: flex-start; justify-content: space-between; gap: 15px; padding-block: 12px; border-bottom: 1px solid var(--line-soft); }
+    .detail:last-child { border-bottom: 0; }
+    .detail-label { color: var(--subtle); font: .72rem var(--mono); }
+    .detail-value { color: #ddf6e3; font-size: .86rem; text-align: right; }
+    .skills-grid { display: flex; flex-wrap: wrap; gap: 10px; }
+    .skill { border: 1px solid #31533d; background: #122119; border-radius: 5px; padding: 10px 14px; color: #c7efd0; font: .78rem var(--mono); }
+    .footnote { font-size: .81rem; color: var(--subtle); margin-top: 23px; }
+    .contact { display: grid; grid-template-columns: 1fr auto; gap: 25px; align-items: end; }
+    .contact h2 { max-width: 700px; }
+    .contact p { max-width: 610px; color: var(--muted); margin: 16px 0 0; }
+    .contact-links { display: flex; flex-wrap: wrap; gap: 12px; }
+    .contact-links .button { white-space: nowrap; }
+    footer { display: flex; justify-content: space-between; gap: 14px; flex-wrap: wrap; padding-block: 29px 50px; color: var(--subtle); font: .72rem var(--mono); }
+    @media (max-width: 900px) {
+      .hero { grid-template-columns: 1fr; padding-block: 95px 80px; }
+      .terminal { max-width: 600px; transform: none; }
+      .project-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+      .about-grid { grid-template-columns: 1fr; }
+      .contact { grid-template-columns: 1fr; }
     }
-
-    body::before{
-      content:"";
-      position:fixed;
-      inset:0;
-      pointer-events:none;
-      z-index:99;
-      background:
-        repeating-linear-gradient(
-          to bottom,
-          rgba(255,255,255,.015) 0,
-          rgba(255,255,255,.015) 1px,
-          transparent 1px,
-          transparent 3px
-        );
+    @media (max-width: 620px) {
+      .container { width: min(calc(100% - 30px), var(--max)); }
+      .nav { align-items: flex-start; padding-block: 18px; flex-direction: column; gap: 16px; }
+      .nav-links { gap: 16px; }
+      .nav-links a { font-size: .72rem; }
+      .nav-cta { padding: 6px 8px; }
+      h1 { font-size: clamp(3.3rem, 17vw, 5rem); }
+      .hero { padding-block: 75px; }
+      .project-grid { grid-template-columns: 1fr; }
+      .project-card { min-height: 0; }
+      .section-top { align-items: flex-start; }
+      .section-aside { display: none; }
+      section { padding-block: 70px; scroll-margin-top: 140px; }
+      .terminal-body { padding: 20px 14px; font-size: .72rem; }
+      .panel { padding: 21px; }
     }
-
-    .noise{
-      position:fixed;
-      inset:0;
-      pointer-events:none;
-      opacity:.04;
-      z-index:98;
-      background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 180 180' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='.7'/%3E%3C/svg%3E");
-    }
-
-    a{color:inherit;text-decoration:none}
-    .wrap{width:min(1050px,92%);margin:auto}
-
-    nav{
-      position:sticky;
-      top:0;
-      z-index:20;
-      background:rgba(3,4,3,.92);
-      border-bottom:1px solid #102015;
-    }
-
-    .nav{
-      min-height:58px;
-      display:flex;
-      justify-content:space-between;
-      align-items:center;
-      gap:20px;
-    }
-
-    .logo{
-      color:var(--green);
-      font-weight:900;
-      font-size:1rem;
-      letter-spacing:2px;
-    }
-
-    .navlinks{
-      display:flex;
-      gap:18px;
-      color:#5f7765;
-      font-size:.78rem;
-    }
-
-    .navlinks a:hover{color:var(--green)}
-
-    header{
-      min-height:92vh;
-      display:flex;
-      align-items:center;
-      position:relative;
-    }
-
-    .hero{
-      display:grid;
-      grid-template-columns:1.15fr .85fr;
-      gap:40px;
-      align-items:center;
-      padding:70px 0;
-    }
-
-    .tiny{
-      color:#4f6f56;
-      font-size:.78rem;
-      margin-bottom:15px;
-    }
-
-    h1{
-      margin:0;
-      font-size:clamp(4rem,10vw,8rem);
-      line-height:.78;
-      letter-spacing:-7px;
-      text-transform:uppercase;
-      color:#ecfff0;
-    }
-
-    h1 span{
-      color:transparent;
-      -webkit-text-stroke:1px #2d6b3b;
-      text-shadow:0 0 18px rgba(57,255,103,.08);
-    }
-
-    .bio{
-      max-width:620px;
-      color:#7f9685;
-      line-height:1.75;
-      margin:30px 0;
-      font-size:1rem;
-    }
-
-    .bio b{
-      color:#c6ffd2;
-      font-weight:normal;
-    }
-
-    .buttons{
-      display:flex;
-      flex-wrap:wrap;
-      gap:10px;
-    }
-
-    .btn{
-      border:1px solid #23512f;
-      background:#071009;
-      color:var(--green);
-      padding:12px 15px;
-      font-weight:bold;
-      font-size:.8rem;
-      transition:.15s;
-    }
-
-    .btn:hover{
-      background:var(--green);
-      color:#020402;
-      transform:translate(-2px,-2px);
-      box-shadow:4px 4px 0 #0d3217;
-    }
-
-    .terminal{
-      border:1px solid #18361f;
-      background:#050805;
-      min-height:330px;
-      box-shadow:10px 10px 0 #020302;
-      transform:rotate(-1deg);
-    }
-
-    .term-top{
-      padding:10px 12px;
-      border-bottom:1px solid #132719;
-      color:#3d6245;
-      font-size:.72rem;
-      display:flex;
-      justify-content:space-between;
-    }
-
-    .term{
-      padding:20px;
-      color:#78957f;
-      font-size:.88rem;
-      line-height:1.9;
-    }
-
-    .g{color:var(--green)}
-    .w{color:#dfffe5}
-    .r{color:var(--red)}
-
-    .cursor{
-      display:inline-block;
-      width:8px;
-      height:14px;
-      background:var(--green);
-      animation:blink .8s steps(1) infinite;
-      vertical-align:middle;
-    }
-
-    @keyframes blink{50%{opacity:0}}
-
-    section{
-      padding:85px 0;
-      border-top:1px solid #0c1a10;
-    }
-
-    .label{
-      color:#315b3a;
-      font-size:.75rem;
-      margin-bottom:10px;
-    }
-
-    h2{
-      margin:0 0 18px;
-      font-size:clamp(2rem,4vw,3.2rem);
-      color:#e4ffe9;
-      letter-spacing:-2px;
-    }
-
-    .lead{
-      max-width:700px;
-      color:#718078;
-      line-height:1.75;
-    }
-
-    .project-grid{
-      display:grid;
-      grid-template-columns:repeat(3,1fr);
-      gap:14px;
-      margin-top:35px;
-    }
-
-    .card{
-      border:1px solid #132719;
-      background:#050805;
-      padding:20px;
-      min-height:230px;
-      position:relative;
-      transition:.15s;
-    }
-
-    .card:hover{
-      border-color:#2f7440;
-      transform:translateY(-3px);
-    }
-
-    .card .id{
-      color:#284e31;
-      font-size:.7rem;
-    }
-
-    .card h3{
-      margin:24px 0 10px;
-      color:#cfffda;
-      font-size:1.15rem;
-    }
-
-    .card p{
-      color:#68786c;
-      font-size:.86rem;
-      line-height:1.6;
-    }
-
-    .tag{
-      display:inline-block;
-      font-size:.68rem;
-      padding:4px 7px;
-      margin:4px 4px 0 0;
-      border:1px solid #173822;
-      color:#61a870;
-    }
-
-    .manifesto{
-      margin-top:30px;
-      border-left:2px solid var(--green);
-      padding:18px 20px;
-      background:#050805;
-      color:#7d9483;
-      line-height:1.8;
-    }
-
-    .skills{
-      margin-top:30px;
-      display:flex;
-      flex-wrap:wrap;
-      gap:10px;
-    }
-
-    .skill{
-      border:1px solid #193523;
-      color:#75a67f;
-      padding:10px 12px;
-      background:#050805;
-      font-size:.8rem;
-    }
-
-    .contactbox{
-      border:1px dashed #1b4a29;
-      background:#040704;
-      padding:28px;
-      margin-top:28px;
-    }
-
-    footer{
-      border-top:1px solid #0c1a10;
-      padding:35px 0 55px;
-      color:#425248;
-      font-size:.76rem;
-    }
-
-    .glitch:hover{
-      animation:glitch .12s linear 4;
-    }
-
-    @keyframes glitch{
-      0%{transform:translate(0)}
-      25%{transform:translate(3px,-1px)}
-      50%{transform:translate(-3px,1px)}
-      75%{transform:translate(1px,2px)}
-      100%{transform:translate(0)}
-    }
-
-    @media(max-width:840px){
-      .hero{grid-template-columns:1fr}
-      .project-grid{grid-template-columns:1fr}
-      .navlinks{display:none}
-      h1{letter-spacing:-4px}
-      .terminal{transform:none}
+    @media (prefers-reduced-motion: reduce) {
+      html { scroll-behavior: auto; }
+      *, *::before, *::after { animation-duration: .01ms !important; transition-duration: .01ms !important; }
     }
   </style>
 </head>
 <body>
-  <div class="noise"></div>
-
-  <nav>
-    <div class="wrap nav">
-      <div class="logo">NOWBLANGIS.exe</div>
-      <div class="navlinks">
-        <a href="#sobre">sobre</a>
+  <a class="skip-link" href="#conteudo" style="position:absolute;left:-9999px;top:auto;width:1px;height:1px;overflow:hidden" onfocus="this.style.cssText='position:fixed;left:12px;top:12px;z-index:100;background:#d5ffe0;color:#05120a;padding:12px'" onblur="this.style.cssText='position:absolute;left:-9999px;top:auto;width:1px;height:1px;overflow:hidden'">Pular para conteúdo</a>
+  <div class="topbar">
+    <nav class="container nav" aria-label="Navegação principal">
+      <a class="brand" href="#inicio" aria-label="NowBlangis, voltar ao início"><span class="brand-mark">N_</span> NOWBLANGIS<span aria-hidden="true">.exe</span></a>
+      <div class="nav-links">
         <a href="#projetos">projetos</a>
-        <a href="#skills">skills</a>
-        <a href="#contato">contato</a>
+        <a href="#sobre">sobre</a>
+        <a href="#stack">tecnologias</a>
+        <a class="nav-cta" href="#contato">contato ↗</a>
       </div>
-    </div>
-  </nav>
+    </nav>
+  </div>
 
-  <header>
-    <div class="wrap hero">
+  <main id="conteudo">
+    <header id="inicio" class="container hero">
       <div>
-        <div class="tiny">[ conexão estabelecida ]</div>
-        <h1 class="glitch">NOW<br><span>BLANGIS</span></h1>
-
-        <p class="bio">
-          Eu mexo com <b>código</b>, web, segurança, automação e umas ideia meio torta.
-          Não sou muito da vibe de ficar falando bonito pra parecer profissional.
-          Eu curto mais <b>abrir, entender, testar, quebrar problema e fazer funcionar</b>.
-        </p>
-
-        <div class="buttons">
-          <a class="btn" href="#projetos">ver minhas parada</a>
-          <a class="btn" href="#contato">me achar por aí</a>
+        <span class="status"><span class="status-dot" aria-hidden="true"></span> Engenharia de Software · projetos autorais</span>
+        <h1>NOW<span>BLANGIS.</span></h1>
+        <p class="hero-description">Eu estudo <strong>Engenharia de Software</strong> e exploro programação criando experiências interativas, projetos web, protótipos 3D e mods para jogos. Busco uma oportunidade de <strong>estágio ou desenvolvimento júnior</strong> para crescer profissionalmente.</p>
+        <div class="actions">
+          <a class="button button-primary" href="#projetos">Explorar projetos <span aria-hidden="true">↗</span></a>
+          <a class="button button-secondary" href="https://github.com/JohnTheFloxPower" target="_blank" rel="noopener noreferrer">GitHub <span aria-hidden="true">↗</span></a>
         </div>
       </div>
-
-      <div class="terminal">
-        <div class="term-top">
-          <span>nowblangis@unknown</span>
-          <span>tty01</span>
-        </div>
-        <div class="term">
-          <div><span class="g">$</span> whoami</div>
-          <div class="w">NowBlangis</div>
-          <br>
-          <div><span class="g">$</span> cat interesses.txt</div>
-          <div>web</div>
-          <div>segurança</div>
-          <div>automação</div>
-          <div>jogo estranho</div>
-          <div>internet obscura</div>
-          <div>ideia aleatória que vira projeto</div>
-          <br>
-          <div><span class="g">$</span> status</div>
-          <div><span class="g">ONLINE</span> // mexendo em alguma coisa</div>
-          <br>
-          <div><span class="g">$</span> _ <span class="cursor"></span></div>
+      <div class="terminal" aria-label="Resumo técnico em formato de terminal">
+        <div class="terminal-head"><span>nowblangis@portfolio: ~</span><span class="terminal-dots" aria-hidden="true"><i></i><i></i><i></i></span></div>
+        <div class="terminal-body">
+          <div><span class="prompt">$</span> whoami</div>
+          <div class="value">Estudante de Engenharia de Software</div>
+          <div class="space"></div>
+          <div><span class="prompt">$</span> cat foco.txt</div>
+          <div>java / javascript</div><div>react / three.js</div><div>mods e experiências interativas</div>
+          <div class="space"></div>
+          <div><span class="prompt">$</span> cat carreira.status</div>
+          <div class="comment">aprendendo // construindo // evoluindo</div>
+          <div class="space"></div>
+          <div><span class="prompt">$</span> <span class="caret" aria-hidden="true"></span></div>
         </div>
       </div>
-    </div>
-  </header>
+    </header>
 
-  <main>
-    <section id="sobre">
-      <div class="wrap">
-        <div class="label">01.sobre_mim</div>
-        <h2>não tenho muito discurso não</h2>
-        <p class="lead">
-          Sou o NowBlangis. Gosto de aprender fazendo, fuçando e vendo como as coisas funcionam por dentro.
-          Às vezes sai site, às vezes sai script, às vezes sai uma parada completamente aleatória.
-          O importante é não ficar só olhando tutorial igual NPC.
-        </p>
-
-        <div class="manifesto">
-          > abrir.<br>
-          > fuçar.<br>
-          > entender.<br>
-          > fazer funcionar.<br>
-          > repetir até ficar bom.
-        </div>
-      </div>
-    </section>
-
-    <section id="projetos">
-      <div class="wrap">
-        <div class="label">02.coisas_que_eu_fiz</div>
-        <h2>umas parada minha</h2>
-        <p class="lead">
-          Aqui entra os projetos de verdade conforme eu for terminando. Nada de encher linguiça só pra parecer que tem 40 anos de experiência.
-        </p>
-
+    <section id="projetos" aria-labelledby="titulo-projetos">
+      <div class="container">
+        <div class="section-top"><div><div class="eyebrow">01 / projetos selecionados</div><h2 id="titulo-projetos">Experimentos que viraram código.</h2></div><div class="section-aside">BUILD LOG // 003</div></div>
+        <p class="section-intro">Projetos pessoais e acadêmicos em diferentes estágios de desenvolvimento. As descrições mostram o escopo conhecido; links para repositórios e demonstrações serão incluídos quando publicados.</p>
         <div class="project-grid">
-          <article class="card">
-            <div class="id">arquivo_01</div>
-            <h3>site que não parece site de empresa</h3>
-            <p>
-              Interface dark, terminal, ruído, animação e umas escolhas visuais que provavelmente fariam um designer corporativo ter um AVC.
-            </p>
-            <span class="tag">HTML</span>
-            <span class="tag">CSS</span>
-            <span class="tag">JS</span>
+          <article class="project-card">
+            <div class="card-head"><span class="project-index">[ PROJECT_01 ]</span><span class="project-state">experimental</span></div>
+            <div class="project-glyph" aria-hidden="true">&lt;⚡&gt;</div>
+            <h3>Kamehameha Core</h3>
+            <p>Mod experimental para Minecraft Java 1.20.1 com foco em um ataque energético cinematográfico. Exploração de efeitos de partículas, feixe de energia, carregamento visual e interação destrutiva com blocos.</p>
+            <div class="tags"><span class="tag">Minecraft Forge</span><span class="tag">1.20.1</span><span class="tag">VFX</span></div>
           </article>
+          <article class="project-card">
+            <div class="card-head"><span class="project-index">[ PROJECT_02 ]</span><span class="project-state">protótipo</span></div>
+            <div class="project-glyph" aria-hidden="true">[3D]</div>
+            <h3>Jogo 3D experimental</h3>
+            <p>Protótipo de jogo feito com React e Three.js, explorando HUD de sanidade e esperança, lanterna, monstro, diálogos e sistema de inventário.</p>
+            <div class="tags"><span class="tag">React</span><span class="tag">Three.js</span><span class="tag">JavaScript</span></div>
+          </article>
+          <article class="project-card">
+            <div class="card-head"><span class="project-index">[ PROJECT_03 ]</span><span class="project-state">acadêmico</span></div>
+            <div class="project-glyph" aria-hidden="true">{ J }</div>
+            <h3>GEEK WORLD</h3>
+            <p>Projeto acadêmico em Java realizado durante a graduação, voltado ao exercício de programação e à organização de soluções em código. Detalhes técnicos serão adicionados após a documentação do projeto.</p>
+            <div class="tags"><span class="tag">Java</span><span class="tag">Faculdade</span></div>
+          </article>
+        </div>
+        <p class="disclaimer">// O código desses três projetos ainda não está hospedado neste repositório. Esta página funciona como vitrine inicial.</p>
+      </div>
+    </section>
 
-          <article class="card">
-            <div class="id">arquivo_02</div>
-            <h3>painel de pesquisa</h3>
-            <p>
-              Uma ideia pra organizar pesquisa, ativos, notas e testes autorizados sem virar aquela pasta Downloads com 900 arquivos.
-            </p>
-            <span class="tag">SECURITY</span>
-            <span class="tag">OSINT</span>
-            <span class="tag">WEB</span>
-          </article>
-
-          <article class="card">
-            <div class="id">arquivo_03</div>
-            <h3>projeto estranho da madrugada</h3>
-            <p>
-              Aquela categoria de projeto que começa com “será que dá?” e termina três horas depois com um negócio funcionando.
-            </p>
-            <span class="tag">PYTHON</span>
-            <span class="tag">AUTOMAÇÃO</span>
-            <span class="tag">CAOS</span>
-          </article>
+    <section id="sobre" aria-labelledby="titulo-sobre">
+      <div class="container">
+        <div class="section-top"><div><div class="eyebrow">02 / perfil</div><h2 id="titulo-sobre">Curiosidade técnica, prática e evolução.</h2></div></div>
+        <div class="about-grid">
+          <div class="panel">
+            <h3>O que me move</h3>
+            <p>Gosto de aprender construindo: testar ideias, entender como as coisas funcionam e transformar experiências em software. Meus interesses passam por desenvolvimento web, programação em Java, renderização 3D e modificações em jogos.</p>
+            <p>Estou em busca da primeira oportunidade profissional em TI para colaborar com uma equipe, receber orientação técnica e desenvolver soluções reais.</p>
+          </div>
+          <div class="panel">
+            <h3>Em poucas linhas</h3>
+            <div class="detail"><span class="detail-label">FORMAÇÃO</span><span class="detail-value">Engenharia de Software<br>Estácio · em andamento</span></div>
+            <div class="detail"><span class="detail-label">LOCAL</span><span class="detail-value">Brasília, DF</span></div>
+            <div class="detail"><span class="detail-label">FOCO</span><span class="detail-value">Estágio / Dev. Júnior</span></div>
+            <div class="detail"><span class="detail-label">ATUAÇÃO ATUAL</span><span class="detail-value">Operações logísticas</span></div>
+          </div>
         </div>
       </div>
     </section>
 
-    <section id="skills">
-      <div class="wrap">
-        <div class="label">03.o_que_eu_mexo</div>
-        <h2>skill sem barrinha fake de 97%</h2>
-        <p class="lead">
-          Odeio aquelas barrinha “JavaScript 93%” KKKK. Então fica só o que eu realmente curto mexer.
-        </p>
-
-        <div class="skills">
-          <div class="skill">JavaScript</div>
-          <div class="skill">React</div>
-          <div class="skill">Node</div>
-          <div class="skill">Python</div>
-          <div class="skill">HTML / CSS</div>
-          <div class="skill">APIs</div>
-          <div class="skill">Linux</div>
-          <div class="skill">automação</div>
-          <div class="skill">segurança web</div>
-          <div class="skill">OSINT</div>
-          <div class="skill">Three.js</div>
-          <div class="skill">mexer até funcionar</div>
-        </div>
+    <section id="stack" aria-labelledby="titulo-stack">
+      <div class="container">
+        <div class="eyebrow">03 / ferramentas & estudos</div>
+        <h2 id="titulo-stack">Tecnologias com as quais venho trabalhando.</h2>
+        <p class="section-intro" style="margin-top:20px">Linguagens e ferramentas utilizadas ou exploradas em projetos pessoais e acadêmicos, sem percentuais artificiais de proficiência.</p>
+        <div class="skills-grid"><span class="skill">Java</span><span class="skill">JavaScript</span><span class="skill">React</span><span class="skill">Three.js</span><span class="skill">HTML</span><span class="skill">CSS</span><span class="skill">Minecraft Forge 1.20.1</span><span class="skill">Interfaces interativas</span></div>
+        <p class="footnote">Aprendizado contínuo · Portfólio em atualização</p>
       </div>
     </section>
 
-    <section id="contato">
-      <div class="wrap">
-        <div class="label">04.me_acha</div>
-        <h2>quer trocar ideia?</h2>
-
-        <div class="contactbox">
-          <div><span class="g">$</span> contact --nowblangis</div>
-          <br>
-          <div>email: <a class="w" href="mailto:joaodias9e3@gmail.com">joaodias9e3@gmail.com</a></div>
-          <div>instagram: <a class="w" href="https://www.instagram.com/nowblangis.kali/" target="_blank" rel="noopener noreferrer">@nowblangis.kali</a></div>
-          
-          <br>
-          <div class="g">[ conexão aberta ]</div>
-        </div>
+    <section id="contato" aria-labelledby="titulo-contato">
+      <div class="container contact">
+        <div><div class="eyebrow">04 / conexão aberta</div><h2 id="titulo-contato">Tem uma oportunidade ou projeto em mente?</h2><p>Estou aberto a conversas sobre estágios, vagas iniciais em desenvolvimento e projetos de software.</p></div>
+        <div class="contact-links"><a class="button button-primary" href="mailto:joaodias9e3@gmail.com">Enviar e-mail ↗</a><a class="button button-secondary" href="https://www.instagram.com/nowblangis.kali/" target="_blank" rel="noopener noreferrer">Instagram ↗</a></div>
       </div>
     </section>
   </main>
-
-  <footer>
-    <div class="wrap">
-      NowBlangis // feito na base do código, café e ideia aleatória.
-    </div>
-  </footer>
-
-  <script>
-    const title = document.querySelector('h1');
-
-    setInterval(() => {
-      if(Math.random() > .84){
-        title.style.textShadow =
-          `${Math.random()*5-2}px 0 #39ff67, ${Math.random()*-5}px 0 #ff334f`;
-        setTimeout(() => title.style.textShadow = 'none', 80);
-      }
-    }, 600);
-
-    document.addEventListener('keydown', (e) => {
-      if(e.key.toLowerCase() === 'h'){
-        document.body.style.filter =
-          document.body.style.filter ? '' : 'contrast(1.2) saturate(1.25)';
-      }
-    });
-  </script>
+  <footer class="container"><span>© <span id="ano">2026</span> NowBlangis</span><span>Feito com HTML, CSS e JavaScript · <a href="https://github.com/JohnTheFloxPower/deepnerd-portfolio" target="_blank" rel="noopener noreferrer">Código no GitHub ↗</a></span></footer>
+  <script>document.getElementById('ano').textContent = new Date().getFullYear();</script>
 </body>
 </html>
